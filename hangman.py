@@ -98,25 +98,38 @@ def main():
     wordslist = WORDSLIST['simple']
     i = random.randrange(0, len(wordslist))
     word = wordslist[i]
-    
-    print(HANGMANPICS[0])
-    
     display_lst = ["_"]*len(word)
-    print(" ".join(display_lst))
+    previous_guesses = set()
     
-    print(word)
-    guess = input("\nEnter a guess: ")
-    while not guess.isalpha() or len(guess) > 1:
-        print(HANGMANPICS[0])
+    while True:
+        print(HANGMANPICS[wrongs])
+        
         print(" ".join(display_lst))
-        print("\nInvalid input, try again.")
-        guess = input("Enter a guess: ")
         
-    if guess in word:
+        guess = input("\nEnter a guess: ")
+        while not guess.isalpha() or len(guess) > 1:
+            print(HANGMANPICS[wrongs])
+            print(" ".join(display_lst))
+            print("\nInvalid input, try again.")
+            guess = input("Enter a guess: ")
         
-        print(word.find(guess))
+        if guess in previous_guesses:
+            print("You've already guessed that, try again")
+            continue
+        else:
+            previous_guesses.add(guess)
         
-    
+        
+        for i,ch in enumerate(word):
+            if ch == guess:
+                display_lst[i] = guess
+        
+        if guess not in word:
+            wrongs += 1
+        
+        if wrongs == 5 or display_lst.count("_") == 0:
+            break
+            
     
     
     
