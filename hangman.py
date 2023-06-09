@@ -91,9 +91,26 @@ WORDSLIST = {
 }
 
 
+class Hangman(object):
+    def __init__(self, dificulty):
+        self.dificulty = dificulty
+        self.wrongs = 0
+    
+    def check_win(self):
+        pass
+    
+    def display(self):
+        print(HANGMANPICS[self.wrongs])
+    
+    def get_guess(self):
+        pass
+    
+    def make_guess(self):
+        pass
+
+
 def main():
     wrongs = 0
-    
     
     wordslist = WORDSLIST['simple']
     i = random.randrange(0, len(wordslist))
@@ -106,6 +123,7 @@ def main():
         
         print(" ".join(display_lst))
         
+        # loop until guess is valid
         guess = input("\nEnter a guess: ")
         while not guess.isalpha() or len(guess) > 1:
             print(HANGMANPICS[wrongs])
@@ -113,12 +131,11 @@ def main():
             print("\nInvalid input, try again.")
             guess = input("Enter a guess: ")
         
+        # if user has already guessed this letter, continue
         if guess in previous_guesses:
             print("You've already guessed that, try again")
             continue
-        else:
-            previous_guesses.add(guess)
-        
+        previous_guesses.add(guess)
         
         for i,ch in enumerate(word):
             if ch == guess:
