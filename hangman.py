@@ -7,6 +7,14 @@ choose a random word in the list
 
 import random
 
+BANNER = """
+ __      __   _                    _         _  _                                
+ \ \    / /__| |__ ___ _ __  ___  | |_ ___  | || |__ _ _ _  __ _ _ __  __ _ _ _  
+  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ | __ / _` | ' \/ _` | '  \/ _` | ' \ 
+   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |_||_\__,_|_||_\__, |_|_|_\__,_|_||_|
+                                                           |___/                                                                                                        
+"""
+
 HANGMANPICS = [
 """
   ____
@@ -113,8 +121,8 @@ class Hangman(object):
     def display(self):
         print(HANGMANPICS[self.wrongs])
         print(" ".join(self.display_lst))
-        print("\nPrevious guesses: ", end="\n")
-        for letter in self.previous_guesses:
+        print("\nWrong guesses: ", end="\n")
+        for letter in self.previous_guesses - set(self.word):
             print(letter, end=" ")
         print()
         
@@ -153,6 +161,7 @@ simple, intermediate or advanced (s, i, a): """
 
 
 def main():
+    print(BANNER)
     cont = "y"
     while cont.lower() == "y":
         difficulty = get_difficulty()
@@ -161,7 +170,6 @@ def main():
         game_ended, result = game.get_status()
         
         while not game_ended:
-            print(game.wrongs)
             game.display()
             game.get_guess()
             game.log_guess()
