@@ -95,59 +95,84 @@ class Hangman(object):
     def __init__(self, dificulty):
         self.dificulty = dificulty
         self.wrongs = 0
-    
-    def check_win(self):
-        pass
+        
+        wordslist = WORDSLIST[dificulty]
+        i = random.randrange(0, len(wordslist))
+        self.word = wordslist[i]
+        
+        self.display_lst = ["_"]*len(self.word)
+        self.previous_guesses = set()
+        
+    def get_status(self):
+        if self.wrongs == 6:
+            return True,"lost"
+        elif self.display_lst.count("_") == 0:
+            return True,"won"
+        return False, ""
     
     def display(self):
         print(HANGMANPICS[self.wrongs])
-    
+        print(" ".join(self.display_lst))
+        print("\nPrevious guesses: ", end="\n")
+        for letter in self.previous_guesses:
+            print(letter, end=" ")
+        print()
+        
     def get_guess(self):
-        pass
+        self.guess = input("\nEnter a guess: ")
+        while not self.guess.isalpha() or len(self.guess) > 1:
+            self.display()
+            print("\nInvalid input, try again.")
+            self.guess = input("Enter a guess: ")
+            
+        # if user has already guessed this letter, re-prompt
+        if self.guess in self.previous_guesses:
+            print("\nYou've already guessed that, try again")
+            self.get_guess()
+        self.previous_guesses.add(self.guess)
     
-    def make_guess(self):
-        pass
+    def log_guess(self):
+        for i,ch in enumerate(self.word):
+            if ch == self.guess:
+                self.display_lst[i] = self.guess
+                
+        if self.guess not in self.word:
+            self.wrongs += 1
+    def reveal_word(self):
+        print("\nThe word was", self.word.upper())
+
+def get_difficulty():
+    valid_dificulties = {"s":"simple","i":"intermediate","a":"advanced"}
+    prompt = """\nCHOOSE A DIFFICULTY
+simple, intermediate or advanced (s, i, a): """
+    answer = input(prompt)
+    while answer.lower() not in valid_dificulties:
+        print("\nInvalid dificulty, try again")
+        answer = input(prompt)
+    return valid_dificulties[answer.lower()]
 
 
 def main():
-    wrongs = 0
-    
-    wordslist = WORDSLIST['simple']
-    i = random.randrange(0, len(wordslist))
-    word = wordslist[i]
-    display_lst = ["_"]*len(word)
-    previous_guesses = set()
-    
-    while True:
-        print(HANGMANPICS[wrongs])
+    cont = "y"
+    while cont.lower() == "y":
+        difficulty = get_difficulty()
+        game = Hangman(difficulty)
         
-        print(" ".join(display_lst))
+        game_ended, result = game.get_status()
         
-        # loop until guess is valid
-        guess = input("\nEnter a guess: ")
-        while not guess.isalpha() or len(guess) > 1:
-            print(HANGMANPICS[wrongs])
-            print(" ".join(display_lst))
-            print("\nInvalid input, try again.")
-            guess = input("Enter a guess: ")
+        while not game_ended:
+            print(game.wrongs)
+            game.display()
+            game.get_guess()
+            game.log_guess()
+            game_ended, result = game.get_status()
         
-        # if user has already guessed this letter, continue
-        if guess in previous_guesses:
-            print("You've already guessed that, try again")
-            continue
-        previous_guesses.add(guess)
-        
-        for i,ch in enumerate(word):
-            if ch == guess:
-                display_lst[i] = guess
-        
-        if guess not in word:
-            wrongs += 1
-        
-        if wrongs == 5 or display_lst.count("_") == 0:
-            break
-            
-    
+        game.display()
+        print("\nGAME",result.upper())
+        game.reveal_word()
+        cont = input("\nDo you want to play again? (y/n) ")
+
+    print("\nThanks for playing! :)")
     
     
     
